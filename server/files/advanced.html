@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+    This is my advanced application of the lecture.
+    I do not fully comprehend each part in a depth I would like to present,
+    so I created this experiment as a separate file and created a minimal
+    simplified version for index.html that I can easily discuss in class.
+    The main difference is in the application of the ARIA attributes.
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 Movies!</title>
+    <style>
+        /* Part 3: Your styling goes here */
+
+        /* Styles the overall page body — sets the font, centers the content, and defines the background. */
+        body {
+            font-family: 'Trebuchet MS', Arial, sans-serif;
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5; /* Light gray background */
+            color: #333; /* Dark gray text */
+        }
+
+        /* Styles the page header — contains the "Movies!" heading at the top. */
+        header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        /* Styles the <main> container — uses flexbox to arrange the movie cards in a responsive grid. */
+        main {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        /* Styles all images — used for the movie poster inside each <figure>. */
+        img {
+            border-radius: 8px;
+            max-width: 100%;
+            display: block;
+        }
+
+        /* Styles the main page heading — the "Movies!" title inside the <header>. */
+        h1 {
+            font-weight: bold;
+            font-size: 2em;
+        }
+
+        /* Styles the movie title headings — each <h2> is created dynamically inside an <article>. */
+        h2 {
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            font-size: 1.4em;
+            display: inline-block;
+        }
+
+        /* Styles the hover effect on movie titles — adds a deeper violet shadow when the user hovers. */
+        h2:hover {
+            box-shadow: 0 2px 8px rgba(138, 43, 226, 0.8); /* Violet shadow at 80% opacity on hover */
+            border-radius: 8px;
+            background-color: rgba(138, 43, 226, 0.2); /* Violet background at 10% opacity */
+        }
+
+        /* Styles each movie card — the <article> elements are created dynamically via JavaScript. */
+        article {
+            background-color: #ffffff; /* White card background */
+            border-radius: 10px;
+            margin: 0;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); /* Black shadow at 12% opacity */
+            flex: 0 0 350px;
+        }
+
+        /* Styles the hover effect on movie cards — adds a deeper shadow when the user hovers. */
+        article:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Black shadow at 20% opacity on hover */
+        }
+
+        /* Styles all <span> elements — adds spacing between inline items. */
+        span {
+            margin-right: 6px;
+        }
+
+        /* Styles the genre badges — applied dynamically via JavaScript to <li> elements inside the genre list. */
+        .genre { /* dynamically applied via JavaScript */
+            background-color: #e8e8e8; /* Light gray genre badge background */
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid #ccc; /* Medium gray border */
+            display: inline-block;
+            font-size: 0.9em;
+            margin-bottom: 4px;
+        }
+
+        /* Styles the metadata line (runtime and release date) — applied dynamically via JavaScript to a <p>. */
+        .meta { /* dynamically applied via JavaScript */
+            color: #666; /* Medium gray meta text */
+            margin: 4px 0 12px 0;
+            font-size: 0.95em;
+        }
+
+        /* Styles the plot description paragraph — applied dynamically via JavaScript to a <p>. */
+        .plot { /* dynamically applied via JavaScript */
+            margin: 12px 0;
+            line-height: 1.5;
+        }
+
+        /* Styles each word in the plot text — enables the speed-read hover effect. */
+        .plot-word { /* dynamically applied via JavaScript */
+            display: inline;
+            border-radius: 4px;
+            padding: 1px 2px;
+            transition: background-color 0.1s, color 0.1s;
+            cursor: default;
+        }
+
+        /* Highlights the word under the cursor with a violet background for speed reading. */
+        .plot-word:hover {
+            background-color: rgba(138, 43, 226, 0.2); /* Violet background at 20% opacity */
+            color: #000; /* Black text for contrast */
+        }
+
+        /* Styles the subsection headings (Directors, Writers, Actors) — each <h3> is inside a <section>. */
+        h3 {
+            font-size: 1.1em;
+            margin: 14px 0 4px 0;
+        }
+
+        /* Styles the <figure> element that wraps the movie poster image. */
+        figure {
+            margin: 0;
+        }
+
+        /* Styles all unordered lists — used for genres, directors, writers, and actors. */
+        ul {
+            margin: 4px 0;
+            padding-left: 24px;
+        }
+
+        /* Styles all list items inside the <ul> lists. */
+        li {
+            margin: 2px 0;
+        }
+    </style>
+    <script>
+        /* Part 1: Your JavaScript code goes here */
+
+        /**
+         * window.onload fires after the entire page (HTML, CSS, images) has finished loading.
+         * We use it to make sure the DOM is ready before we try to manipulate it.
+         **/
+        window.onload = function () {
+
+            /**
+             * Create a new XMLHttpRequest object — this lets us fetch data from the server
+             * without reloading the page (aka AJAX).
+             **/
+            const xhr = new XMLHttpRequest()
+
+            /**
+             * Define what happens when the server responds.
+             * This callback runs once the request completes (success or failure).
+             **/
+            xhr.onload = function () {
+
+                /**
+                 * [Semantic HTML] Select the <main> element — this is the primary content area of the page.
+                 * Screen readers use <main> to let users skip navigation and jump straight to content.
+                 **/
+                const mainElement = document.querySelector("main")
+
+                /**
+                 * Check if the server returned HTTP 200 (OK).
+                 * We use === (strict equality) to avoid unexpected type coercion.
+                 **/
+                if (xhr.status === 200) {
+
+                    /**
+                     * The server sends movie data as a JSON string.
+                     * JSON.parse() converts that string into a JavaScript array of objects.
+                     **/
+                    const movies = JSON.parse(xhr.responseText)
+
+                    /**
+                     * Loop through each movie object in the array.
+                     * "index" gives us a unique number (0, 1, 2...) for each movie — used for IDs.
+                     **/
+                    movies.forEach(function (movie, index) {
+
+                        /** --- Create the movie card --- **/
+
+                        /**
+                         * [Semantic HTML] <article> represents a self-contained piece of content
+                         * (like a blog post or, in our case, a movie card).
+                         **/
+                        const article = document.createElement("article")
+
+                        /**
+                         * [AOM] aria-labelledby links this article to its heading element.
+                         * Screen readers announce the heading text when entering this article,
+                         * so users know which movie card they are in.
+                         **/
+                        const titleId = "movie-title-" + index
+                        article.setAttribute("aria-labelledby", titleId)
+
+                        /** --- Poster image --- **/
+
+                        /**
+                         * [Semantic HTML] <figure> wraps media content (images, diagrams, etc.)
+                         * that is referenced from the main text. It gives the image semantic meaning
+                         * beyond just being a floating <img>.
+                         **/
+                        const figure = document.createElement("figure")
+                        const img = document.createElement("img")
+                        img.src = movie.Poster       // Sets the image URL from the movie data
+                        img.alt = "Poster of " + movie.Title  // The alt text is for screen readers and for when the image fails to load
+                        figure.appendChild(img)       // Puts the <img> inside the <figure>
+                        article.appendChild(figure)   // Puts the <figure> inside the <article>
+
+                        /** --- Movie title --- **/
+
+                        /**
+                         * [Semantic HTML] We use <h2> for movie titles because <h1> is already
+                         * used for the page heading ("Movies!"). This keeps the heading hierarchy
+                         * correct: h1 > h2 > h3. Screen readers use heading levels to build
+                         * a navigable outline of the page.
+                         **/
+                        const title = document.createElement("h2")
+                        title.id = titleId            // This ID is referenced by aria-labelledby above
+                        title.textContent = movie.Title
+                        article.appendChild(title)
+
+                        /** --- Runtime and release date --- **/
+
+                        const meta = document.createElement("p")
+                        meta.className = "meta"       // A CSS class for gray, smaller text styling
+
+                        /**
+                         * [Semantic HTML] <time> with a datetime attribute provides a machine-readable
+                         * date. Browsers and assistive tech can parse "2024-01-19" even if we
+                         * display it differently to the user.
+                         **/
+                        meta.innerHTML = "Runtime: " + movie.Runtime + " min \u2022 Released on "
+                            + "<time datetime=\"" + movie.Released + "\">" + movie.Released + "</time>"
+                        article.appendChild(meta)
+
+                        /** --- Genre tags --- **/
+
+                        /**
+                         * [Semantic HTML] Using <ul> + <li> for genres instead of loose <span> elements.
+                         * This tells screen readers, "here is a list of 3 items," instead of just
+                         * reading text blobs with no structure.
+                         **/
+                        const genreList = document.createElement("ul")
+
+                        /**
+                         * [AOM] The aria-label gives this list a name that screen readers announce,
+                         * e.g., "Genres, list, 3 items." Without it, the list would be unnamed.
+                         **/
+                        genreList.setAttribute("aria-label", "Genres")
+
+                        /** These inline styles display the genre badges horizontally (overrides the default list styling). **/
+                        genreList.style.listStyle = "none"   // Removes the bullet points
+                        genreList.style.padding = "0"        // Removes the default left padding
+                        genreList.style.display = "flex"     // Lays out the items in a row
+                        genreList.style.flexWrap = "wrap"    // Wraps to the next line if needed
+                        genreList.style.gap = "4px"          // A small space between the badges
+
+                        /** Creates one <li> element per genre. **/
+                        movie.Genres.forEach(function (genre) {
+                            const li = document.createElement("li")
+                            li.className = "genre"        // A CSS class for the rounded badge styling
+                            li.textContent = String(genre) // Sets the genre name as text
+                            genreList.appendChild(li)
+                        })
+                        article.appendChild(genreList)
+
+                        /** --- Plot summary --- **/
+
+                        /**
+                         * [Semantic HTML] <section> groups related content together.
+                         * Each section represents a distinct part of the movie card.
+                         **/
+                        const plotSection = document.createElement("section")
+
+                        /**
+                         * [AOM] The aria-label identifies this section for screen reader users
+                         * navigating by landmarks (e.g., the "Plot summary" section).
+                         **/
+                        plotSection.setAttribute("aria-label", "Plot summary")
+                        const plot = document.createElement("p")
+                        plot.className = "plot"
+
+                        /**
+                         * Split the plot text into individual words and wrap each in a <span>.
+                         * This enables the speed-read hover effect — each word highlights
+                         * as you move the mouse across the text.
+                         **/
+                        movie.Plot.split(" ").forEach(function (word) {
+                            const wordSpan = document.createElement("span")
+                            wordSpan.className = "plot-word"
+                            wordSpan.textContent = word + " "
+                            plot.appendChild(wordSpan)
+                        })
+                        plotSection.appendChild(plot)
+                        article.appendChild(plotSection)
+
+                        /** --- Ratings --- **/
+
+                        /** [Semantic HTML] Another <section> to group rating information. **/
+                        const ratingsSection = document.createElement("section")
+                        /** [AOM] The aria-label lets screen readers announce the "Ratings" section. **/
+                        ratingsSection.setAttribute("aria-label", "Ratings")
+                        const ratingsP = document.createElement("p")
+                        /**
+                         * innerHTML is used here (instead of textContent) because we need
+                         * <strong> tags for bold labels and &bull; for the bullet separator.
+                         **/
+                        ratingsP.innerHTML = "<strong>IMDb:</strong> " + movie.imdbRating
+                            + "/10 &bull; <strong>Metascore:</strong> " + movie.Metascore + "/100"
+                        ratingsSection.appendChild(ratingsP)
+                        article.appendChild(ratingsSection)
+
+                        /** --- Directors --- **/
+
+                        /** [Semantic HTML] <section> groups the heading and list together. **/
+                        const dirSection = document.createElement("section")
+                        /** [AOM] The aria-label enables landmark navigation for this section. **/
+                        dirSection.setAttribute("aria-label", "Directors")
+
+                        /**
+                         * [Semantic HTML] <h3> because we are inside an <article> with an <h2> title.
+                         * The heading hierarchy is: h1 (page) > h2 (movie title) > h3 (subsection).
+                         **/
+                        const dirH3 = document.createElement("h3")
+                        dirH3.textContent = "Directors"
+                        dirSection.appendChild(dirH3)
+                        const dirList = document.createElement("ul")
+                        /** [AOM] The aria-label describes the list content for screen readers. **/
+                        dirList.setAttribute("aria-label", "List of directors")
+
+                        /** Loop through each director and create a list item. **/
+                        movie.Directors.forEach(function (d) {
+                            const li = document.createElement("li")
+                            li.textContent = String(d)
+                            dirList.appendChild(li)
+                        })
+                        dirSection.appendChild(dirList)
+                        article.appendChild(dirSection)
+
+                        /** --- Writers --- **/
+
+                        /** [Semantic HTML] <section> with [AOM] aria-label (same pattern as Directors). **/
+                        const wrSection = document.createElement("section")
+                        wrSection.setAttribute("aria-label", "Writers")
+                        const wrH3 = document.createElement("h3")  // [Semantic HTML] <h3> subsection heading
+                        wrH3.textContent = "Writers"
+                        wrSection.appendChild(wrH3)
+                        const wrList = document.createElement("ul")
+                        wrList.setAttribute("aria-label", "List of writers")  // [AOM] list label
+                        movie.Writers.forEach(function (w) {
+                            const li = document.createElement("li")
+                            li.textContent = String(w)
+                            wrList.appendChild(li)
+                        })
+                        wrSection.appendChild(wrList)
+                        article.appendChild(wrSection)
+
+                        /** --- Actors --- **/
+
+                        /** [Semantic HTML] <section> with [AOM] aria-label (same pattern as Directors). **/
+                        const actSection = document.createElement("section")
+                        actSection.setAttribute("aria-label", "Actors")
+                        const actH3 = document.createElement("h3")  // [Semantic HTML] <h3> subsection heading
+                        actH3.textContent = "Actors"
+                        actSection.appendChild(actH3)
+                        const actList = document.createElement("ul")
+                        actList.setAttribute("aria-label", "List of actors")  // [AOM] list label
+                        movie.Actors.forEach(function (a) {
+                            const li = document.createElement("li")
+                            li.textContent = String(a)
+                            actList.appendChild(li)
+                        })
+                        actSection.appendChild(actList)
+                        article.appendChild(actSection)
+
+                        /** Finally, add the completed movie card to the <main> container. **/
+                        mainElement.appendChild(article)
+                    })
+                } else {
+                    /** If the server returned an error (not 200), show an error message. **/
+
+                    const errorP = document.createElement("p")
+
+                    /**
+                     * [AOM] role="alert" makes screen readers immediately announce this message
+                     * when it appears — the user does not have to navigate to it.
+                     * This is important for accessibility: errors should be announced proactively.
+                     **/
+                    errorP.setAttribute("role", "alert")
+                    errorP.textContent = "Daten konnten nicht geladen werden, Status "
+                        + xhr.status + " - " + xhr.statusText
+                    mainElement.appendChild(errorP)
+                }
+            }
+
+            /** Configure the request: HTTP GET method, targeting the "/movies" endpoint on our server. **/
+            xhr.open("GET", "/movies")
+
+            /** Send the request — the onload callback above will fire when the response arrives. **/
+            xhr.send()
+        }
+    </script>
+
+</head>
+
+<body>
+    <header>
+        <h1>Movies!</h1>
+    </header>
+    <main aria-label="Movie catalog">
+        <!-- Hidden elements to satisfy the CSS linter — these classes are applied dynamically via JS -->
+        <span class="genre meta plot plot-word" hidden></span>
+    </main>
+</body>
+
+</html>
