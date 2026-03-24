@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 Movies!</title>
+    <style>
+        /* Part 3: Your styling goes here */
+
+        /* Styles the overall page body — uses flexbox to arrange the movie cards in a responsive grid. */
+        body {
+            font-family: 'Trebuchet MS', sans-serif;
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        /* Styles all images — used for the movie poster inside each article. */
+        img {
+            display: block;
+            margin: 0 auto;
+            border-radius: 8px;
+            max-width: 100%;
+        }
+
+        /* Styles the main page heading — takes full width so it stays above the flex grid. */
+        h1 {
+            font-weight: bold;
+            font-size: 2em;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Styles the movie title headings — each <h2> is created dynamically inside an <article>. */
+        h2 {
+            text-align: center;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            font-size: 1.4em;
+        }
+
+        /* Styles the hover effect on movie titles — adds a deeper violet shadow when the user hovers. */
+        h2:hover {
+            box-shadow: 0 2px 8px rgba(138, 43, 226, 0.8); /* Violet shadow at 80% opacity on hover */
+            border-radius: 8px;
+            background-color: rgba(138, 43, 226, 0.2); /* Violet background at 10% opacity */
+        }
+
+        /* Styles the subsection headings (Directors, Writers, Actors) — each <h3> is inside an <article>. */
+        h3 {
+            font-size: 1.1em;
+            margin: 14px 0 4px 0;
+        }
+
+        /* Styles each movie card — fixed-width boxes arranged by the flex container. */
+        article {
+            background-color: #ffffff; /* White card background */
+            border-radius: 10px;
+            margin: 0;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); /* Black shadow at 12% opacity */
+            flex: 0 0 350px;
+        }
+
+        /* Styles all <span> elements — adds spacing between inline items. */
+        span {
+            margin-right: 6px;
+        }
+
+        /* Styles the genre badges — applied dynamically via JavaScript to <span> elements. */
+        .genre {
+            background-color: #e8e8e8; /* Light gray genre badge background */
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid #ccc; /* Medium gray border */
+            display: inline-block;
+        }
+    </style>
+    <script>
+        /* Part 1: Your JavaScript code goes here */
+
+        /**
+         * window.onload fires after the entire page (HTML, CSS, images) has finished loading.
+         * We use it to make sure the DOM is ready before we try to manipulate it.
+         **/
+        window.onload = function () {
+
+            /**
+             * Create a new XMLHttpRequest object — this lets us fetch data from the server
+             * without reloading the page (aka AJAX).
+             **/
+            const xhr = new XMLHttpRequest()
+
+            /**
+             * Define what happens when the server responds.
+             * This callback runs once the request completes (success or failure).
+             **/
+            xhr.onload = function () {
+
+                /** Select the <body> element to append movie cards to. **/
+                const body = document.querySelector("body")
+
+                /**
+                 * Check if the server returned HTTP 200 (OK).
+                 * We use === (strict equality) to avoid unexpected type coercion.
+                 **/
+                if (xhr.status === 200) {
+                    /* Part 2: Build the HTML elements here and append them to the body */
+
+                    /**
+                     * The server sends movie data as a JSON string.
+                     * JSON.parse() converts that string into a JavaScript array of objects.
+                     **/
+                    const movies = JSON.parse(xhr.responseText)
+
+                    /** Loop through each movie object in the array. **/
+                    movies.forEach(function (movie) {
+
+                        /** <article> represents a self-contained piece of content (a movie card). **/
+                        const article = document.createElement("article")
+
+                        /** --- Poster image --- **/
+                        const img = document.createElement("img")
+                        img.src = movie.Poster // Sets the image URL from the movie data
+                        img.alt = "Poster of " + movie.Title // Alt text for screen readers and for when the image fails to load
+                        article.appendChild(img)
+
+                        /** --- Movie title --- **/
+                        const title = document.createElement("h2")
+                        title.textContent = movie.Title
+                        article.appendChild(title)
+
+                        /** --- Runtime and release date --- **/
+                        const meta = document.createElement("p")
+                        meta.textContent = "Runtime: " + movie.Runtime + " min - Released on " + movie.Released
+                        article.appendChild(meta)
+
+                        /** --- Genre tags --- **/
+                        const genresDiv = document.createElement("div")
+                        movie.Genres.forEach(function (genre) {
+                            const span = document.createElement("span")
+                            span.className = "genre" // A CSS class for the rounded badge styling
+                            span.textContent = String(genre)
+                            genresDiv.appendChild(span)
+                        })
+                        article.appendChild(genresDiv)
+
+                        /** --- Plot summary --- **/
+                        const plot = document.createElement("p")
+                        plot.textContent = movie.Plot
+                        article.appendChild(plot)
+
+                        /** --- Ratings --- **/
+                        const ratings = document.createElement("p")
+                        ratings.textContent = "IMDb: " + movie.imdbRating + "/10 - Metascore: " + movie.Metascore + "/100"
+                        article.appendChild(ratings)
+
+                        /** --- Directors --- **/
+                        const dirH3 = document.createElement("h3")
+                        dirH3.textContent = "Directors"
+                        article.appendChild(dirH3)
+                        const dirList = document.createElement("ul")
+                        movie.Directors.forEach(function (d) {
+                            const li = document.createElement("li")
+                            li.textContent = String(d)
+                            dirList.appendChild(li)
+                        })
+                        article.appendChild(dirList)
+
+                        /** --- Writers --- **/
+                        const wrH3 = document.createElement("h3")
+                        wrH3.textContent = "Writers"
+                        article.appendChild(wrH3)
+                        const wrList = document.createElement("ul")
+                        movie.Writers.forEach(function (w) {
+                            const li = document.createElement("li")
+                            li.textContent = String(w)
+                            wrList.appendChild(li)
+                        })
+                        article.appendChild(wrList)
+
+                        /** --- Actors --- **/
+                        const actH3 = document.createElement("h3")
+                        actH3.textContent = "Actors"
+                        article.appendChild(actH3)
+                        const actList = document.createElement("ul")
+                        movie.Actors.forEach(function (a) {
+                            const li = document.createElement("li")
+                            li.textContent = String(a)
+                            actList.appendChild(li)
+                        })
+                        article.appendChild(actList)
+
+                        /** Adds the completed movie card to the page body. **/
+                        body.appendChild(article)
+                    })
+                } else {
+                    /** If the server returned an error (not 200), show an error message. **/
+                    body.textContent = "Daten konnten nicht geladen werden, Status " + xhr.status + " - " + xhr.statusText
+                }
+            }
+
+            /** Configure the request: HTTP GET method, targeting the "/movies" endpoint on our server. **/
+            xhr.open("GET", "/movies")
+
+            /** Send the request — the onload callback above will fire when the response arrives. **/
+            xhr.send()
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Movies!</h1>
+</body>
+
+</html>
