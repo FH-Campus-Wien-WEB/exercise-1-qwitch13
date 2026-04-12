@@ -19,7 +19,7 @@ app.get('/movies', function (req, res) {
       "Writers": ["Ava DuVernay", "Isabel Wilkerson"],
       "Actors": ["Aunjanue Ellis-Taylor", "Jon Bernthal", "Niecy Nash"],
       "Plot": "The unspoken system that has shaped America and chronicles how lives today are defined by a hierarchy of human divisions.",
-      "Poster": "https://m.media-amazon.com/images/M/MV5BMmE5YTBlMDAtZDFjZi00NjQ5LWJkNWUtMzJhMmYzYWQyZDA4XkEyXkFqcGc@._V1_SX300.jpg",
+      "Poster": "https://m.media-amazon.com/images/m/mv5bmme5ytblmdatzdfjzi00njq5lwjknwutmzjhmmyzywqyzda4xkeyxkfqcgc@._v1_sx300.jpg",
       "Metascore": 75,
       "imdbRating": 7.2
     },
@@ -32,7 +32,7 @@ app.get('/movies', function (req, res) {
       "Writers": ["Adam Curtis"],
       "Actors": ["Adam Curtis", "Donald Trump", "Vladimir Putin"],
       "Plot": "Adam Curtis explains how, at a time of confusing and inexplicable world events, politicians and the people they represent have retreated in to a damaging over-simplified version of what is happening.",
-      "Poster": "https://m.media-amazon.com/images/M/MV5BYzFlMjZlNTUtMWIwZi00NGY3LTljMTctZDk3MDIwZGVhMmQ5XkEyXkFqcGc@._V1_SX300.jpg",
+      "Poster": "https://m.media-amazon.com/images/m/mv5byzflmjzlntutmwiwzi00ngy3ltljmtctzdk3mdiwzgvhmmq5xkeyxkfqcgc@._v1_sx300.jpg",
       "Metascore": null,
       "imdbRating": 8.2,
     },
@@ -45,13 +45,13 @@ app.get('/movies', function (req, res) {
       "Writers": ["Lilly Wachowski", "Lana Wachowski"],
       "Actors": ["Keanu Reeves", "Laurence Fishburne", "Carrie-Anne Moss"],
       "Plot": "When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth--the life he knows is the elaborate deception of an evil cyber-intelligence.",
-      "Poster": "https://m.media-amazon.com/images/M/MV5BN2NmN2VhMTQtMDNiOS00NDlhLTliMjgtODE2ZTY0ODQyNDRhXkEyXkFqcGc@._V1_SX300.jpg",
+      "Poster": "https://m.media-amazon.com/images/m/mv5bn2nmn2vhmtqtmdnios00ndlhltlimjgtode2zty0odqyndrhxkeyxkfqcgc@._v1_sx300.jpg",
       "Metascore": 73,
       "imdbRating": 8.7
     }
   ]
 
-  res.json(movies) // Send the movies data as JSON response
+  res.json(movies) // send the movies data as json response
 })
 
 app.listen(3000)
